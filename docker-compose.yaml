@@ -1,0 +1,35 @@
+version: '3'
+services:
+        glpi-web:
+                build: ~/GLPI/
+                container_name: glpi-web
+                ports:
+                        - 80:80
+                networks:
+                        - glpi-net
+                env_file:
+                        - ~/GLPI/env_files/env-glpi.env.example
+                secrets:
+                        - db_password
+                depends_on:
+                        - glpi-db
+
+        glpi-db:
+                image: mysql:5.7
+                container_name: glpi-db
+                networks:
+                        - glpi-net
+                volumes:
+                        - ~/GLPI/mysql:/var/lib/mysql
+                env_file:
+                        - ~/GLPI/env_files/env-db-glpi.env.example
+                secrets:
+                        - db_password
+                        - db_root_password
+secrets:
+        db_password:
+                file: ~/GLPI/mdp/db_password.secret.example
+        db_root_password:
+                file: ~/GLPI/mdp/root_mdp.secret.example
+networks:
+        glpi-net:
